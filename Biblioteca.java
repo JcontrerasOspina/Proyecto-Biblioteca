@@ -1,0 +1,273 @@
+package Biblioteca_virtual;
+
+import java.util.Scanner;
+
+public class Biblioteca {
+	
+	//Contraseñas
+		//Administrador
+		static String Pasword_Admin = "Administrador.2025";
+		//Usuario
+		static String Pasword_User = "Octubre123.";
+	
+	//Funcion inicio de sesion
+	static String login(Scanner sc) {
+		System.out.println("Quien esta ingresnado");
+		System.out.println("1.Usuario");
+		System.out.println("2.Administrador");
+		int respuesta = sc.nextInt();
+		
+		if (respuesta == 1) {
+			System.out.println("Ingresa tu contraseña");
+			String Pasword = sc.next();
+			if (Pasword.equals(Pasword_User)) {
+				System.out.println("Bienvenido");
+				return "Usuario";
+			}else {
+				System.out.println("Contraseña incorrecta");
+				return "Error";
+			}
+		}
+		else if (respuesta == 2) {
+			System.out.println("Ingresa tu contraseña");
+			String Pasword = sc.next();
+			if (Pasword.equals(Pasword_Admin)) {
+				System.out.println("Bienvenido");
+				return "Administrador";
+			}else {
+				System.out.println("Contraseña incorrecta");
+				return "Error";
+			}
+		}else {
+			System.out.println("Opcion no valida");
+			return "Error";
+		}
+	}
+
+    // Función para llevar libro
+    static void llevar_libro(int[] Cantidad, int i, Scanner sc, String tipoUsuario) {
+    	if (tipoUsuario.equals("Usuario")) {
+    		System.out.println("¿Deseas llevar el libro?");
+            System.out.println("1. Sí  2. No");
+            int desicion = sc.nextInt();
+
+            if (desicion == 1) {
+                System.out.println("¿Cuántos libros deseas llevar?");
+                int cantidad_llevar = sc.nextInt();
+
+                if (cantidad_llevar <= Cantidad[i]) {
+                    Cantidad[i] = Cantidad[i] - cantidad_llevar;
+                    System.out.println("-------------------------------------");
+                    System.out.println("Se han llevado " + cantidad_llevar + " libro(s)");
+                    System.out.println("Cantidad restante: " + Cantidad[i]);
+                    System.out.println("-------------------------------------");
+                } else {
+                    System.out.println("No hay suficiente stock del libro buscado");
+                }
+
+                Alerta_stock(Cantidad, i);
+            }
+        }
+    	}
+
+    // Función alerta de stock
+    static void Alerta_stock(int[] Cantidad, int i) {
+        if (Cantidad[i] <= 2) {
+            System.out.println("¡Atención! Quedan pocos libros de este título: " + Cantidad[i]);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        String tipoUsuario = login(sc);
+        if (tipoUsuario.equals("Error")) {
+        	System.out.println("Acceso denegado");
+        	return;
+        }
+        
+        int[] Id = new int[100];
+        String[] Titulo = new String[100];
+        String[] Autor = new String[100];
+        String[] Editorial = new String[100];
+        int[] Cantidad = new int[100];
+
+        int contador = 0;
+        int respuesta;
+        
+      //Libros predeterminados para prueba con usuario
+        Titulo[0] = "Cien años de soledad";
+        Autor[0] = "Gabriel García Márquez";
+        Editorial[0] = "Sudamericana";
+        Cantidad[0] = 4;
+        Id[0] = 1;
+        contador++;
+
+        Titulo[1] = "El principito";
+        Autor[1] = "Antoine de Saint-Exupéry";
+        Editorial[1] = "Salamandra";
+        Cantidad[1] = 3;
+        Id[1] = 2;
+        contador++;
+
+        do {
+            System.out.println("Menú principal");
+            System.out.println("¿Qué desea realizar?");
+            if (tipoUsuario.equals("Administrador")) {
+            	System.out.println("1. Registrar libro nuevo");
+            	System.out.println("2. Listado de libros");
+            }
+            System.out.println("3. Buscar libro");
+            System.out.println("4. Salir");
+            respuesta = sc.nextInt();
+            sc.nextLine();
+
+            switch (respuesta) {
+            
+            	case 1:
+            		if (tipoUsuario.equals("Usuario")) {
+            			System.out.println("No tienes permisos para esta funcion");
+            			break;
+            		}
+                    System.out.println("-------------------------------------");
+                    Id[contador] = contador + 1;
+                    System.out.println("Título del libro:");
+                    Titulo[contador] = sc.nextLine();
+                    System.out.println("Autor:");
+                    Autor[contador] = sc.nextLine();
+                    System.out.println("Editorial:");
+                    Editorial[contador] = sc.nextLine();
+                    System.out.println("¿Cuántos libros llegaron?");
+                    Cantidad[contador] = sc.nextInt();
+                    
+                    if (Cantidad[contador] <= 0) {
+                    	System.out.println("Para poder registrar el libro debe de ingresar al menos 1");
+                    	break;
+                    }
+                        contador++;
+                    	sc.nextLine();
+                        System.out.println("Libro registrado");
+                        System.out.println("-------------------------------------");
+                        break;
+                case 2:
+                	if (!tipoUsuario.equals("Administrador")) {
+                		System.out.println("No tienes acceso a este item");
+                	}
+                    if (contador == 0) {
+                        System.out.println("No hay libros registrados");
+                    } else {
+                        System.out.println("Listado:");
+                        for (int i = 0; i <= contador; i++) {
+                        	if (Titulo [i] != null) {
+                        		System.out.println("-------------------------------------");
+                        			System.out.println("ID: " + Id[i]);
+                        			System.out.println("Título: " + Titulo[i]);
+                                    System.out.println("Autor: " + Autor[i]);
+                                    System.out.println("Editorial: " + Editorial[i]);
+                                    System.out.println("Cantidad: " + Cantidad[i]);
+                                    System.out.println("-------------------------------------");
+                        	}
+                        }
+                    }
+                    break;
+
+                case 3:
+                    if (contador == 0) {
+                        System.out.println("No hay libros registrados");
+                    } else {
+                        System.out.println("¿Por qué medio vas a buscar?");
+                        System.out.println("1. Por título");
+                        System.out.println("2. Por autor");
+                        System.out.println("3. Por editorial");
+                        System.out.println("4. Por ID");
+                        int respuesta_medio = sc.nextInt();
+                        sc.nextLine();
+
+                        boolean encontrar_libro = false;
+                        String buscar_libro;
+
+                        if (respuesta_medio == 1) {
+                            System.out.println("Ingresa el título del libro:");
+                            buscar_libro = sc.nextLine();
+
+                            for (int i = 0; i <= contador; i++) {
+                                if (Titulo[i] != null && Titulo[i].equalsIgnoreCase(buscar_libro)) {
+                                    System.out.println("-------------------------------------");
+                                    System.out.println("Título: " + Titulo[i]);
+                                    System.out.println("Autor: " + Autor[i]);
+                                    System.out.println("Editorial: " + Editorial[i]);
+                                    System.out.println("Cantidad: " + Cantidad[i]);
+                                    System.out.println("-------------------------------------");
+                                    encontrar_libro = true;
+                                    llevar_libro(Cantidad, i, sc, tipoUsuario);
+                                }
+                            }
+                            if (!encontrar_libro) System.out.println("Libro no encontrado");
+                        }
+
+                        else if (respuesta_medio == 2) {
+                            System.out.println("Ingresa el autor del libro:");
+                            buscar_libro = sc.nextLine();
+
+                            for (int i = 0; i <= contador; i++) {
+                                if (Autor[i] != null && Autor[i].equalsIgnoreCase(buscar_libro)) {
+                                    System.out.println("-------------------------------------");
+                                    System.out.println("Título: " + Titulo[i]);
+                                    System.out.println("Autor: " + Autor[i]);
+                                    System.out.println("Editorial: " + Editorial[i]);
+                                    System.out.println("Cantidad: " + Cantidad[i]);
+                                    System.out.println("-------------------------------------");
+                                    encontrar_libro = true;
+                                    llevar_libro(Cantidad, i, sc, tipoUsuario);
+                                }
+                            }
+                            if (!encontrar_libro) System.out.println("Libro no encontrado");
+                        }
+
+                        else if (respuesta_medio == 3) {
+                            System.out.println("Ingresa la editorial del libro:");
+                            buscar_libro = sc.nextLine();
+
+                            for (int i = 0; i <= contador; i++) {
+                                if (Editorial[i] != null && Editorial[i].equalsIgnoreCase(buscar_libro)) {
+                                    System.out.println("-------------------------------------");
+                                    System.out.println("Título: " + Titulo[i]);
+                                    System.out.println("Autor: " + Autor[i]);
+                                    System.out.println("Editorial: " + Editorial[i]);
+                                    System.out.println("Cantidad: " + Cantidad[i]);
+                                    System.out.println("-------------------------------------");
+                                    encontrar_libro = true;
+                                    llevar_libro(Cantidad, i, sc, tipoUsuario);
+                                }
+                            }
+                            if (!encontrar_libro) System.out.println("Libro no encontrado");
+                        }
+                        else if (respuesta_medio == 4) {
+                            System.out.println("Ingresa ID del libro:");
+                            int buscar_id = sc.nextInt();
+
+                            for (int i = 0; i <= contador; i++) {
+                                if (Id[i] == buscar_id) {
+                                    System.out.println("-------------------------------------");
+                                    System.out.println("ID: " + Id[i]);
+                                    System.out.println("Título: " + Titulo[i]);
+                                    System.out.println("Autor: " + Autor[i]);
+                                    System.out.println("Editorial: " + Editorial[i]);
+                                    System.out.println("Cantidad: " + Cantidad[i]);
+                                    System.out.println("-------------------------------------");
+                                    encontrar_libro = true;
+                                    llevar_libro(Cantidad, i, sc, tipoUsuario);
+                                }
+                            }
+                            if (!encontrar_libro) System.out.println("Libro no encontrado");
+                        }
+                    }
+                    break;
+            }
+
+        } while (respuesta != 4);
+
+        System.out.println("Programa finalizado.");
+    }
+}
+
